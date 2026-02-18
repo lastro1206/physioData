@@ -10,6 +10,7 @@ import TreatmentPriceDashboard from "@/components/TreatmentPriceDashboard";
 import PriceGuide from "@/components/PriceGuide";
 import ThemeToggle from "@/components/ThemeToggle";
 import { getRegionalAveragePriceForAddress } from "@/lib/calculate-regional-average";
+import { extractRegion } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -28,10 +29,18 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${hospital.name} - 물리치료 병원 정보`;
+  // 지역 추출
+  const region = extractRegion(hospital.address) || '전국';
+  
+  // 제목 최적화: [병원명] - [지역] 도수치료 및 재활 정보 | PhysioData
+  const title = `${hospital.name} - ${region} 도수치료 및 재활 정보 | PhysioData`;
+  
   const description = hospital.description
     ? hospital.description
-    : `${hospital.name}은(는) ${hospital.address}에 위치한 물리치료 및 재활 병원입니다.`;
+    : `${hospital.name}은(는) ${hospital.address}에 위치한 물리치료 및 재활 병원입니다. ${region} 지역의 도수치료 및 재활 치료 정보를 제공합니다.`;
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://physiodata.kr');
 
   return {
     title,
@@ -41,7 +50,8 @@ export async function generateMetadata({
       description,
       type: "website",
       locale: "ko_KR",
-      siteName: "물리치료 병원 정보",
+      siteName: "PhysioData",
+      url: `${baseUrl}/hospitals/${id}`,
       ...(hospital.image && {
         images: [
           {
@@ -62,57 +72,65 @@ export async function generateMetadata({
       }),
     },
     alternates: {
-      canonical: `/hospitals/${id}`,
+      canonical: `${baseUrl}/hospitals/${id}`,
     },
   };
 }
 
 function generateStructuredData(hospital: Hospital, id: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://physiodata.kr');
+  
+  const region = extractRegion(hospital.address) || '전국';
+
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": `https://yourdomain.com/hospitals/${id}`, // 도메인 생기면 수정
-    name: hospital.name,
-    address: {
+    "@type": "MedicalBusiness",
+    "@id": `${baseUrl}/hospitals/${id}`,
+    "name": hospital.name,
+    "description": hospital.description || `${hospital.name}은(는) ${hospital.address}에 위치한 물리치료 및 재활 병원입니다.`,
+    "address": {
       "@type": "PostalAddress",
-      streetAddress: hospital.address,
-      addressCountry: "KR",
+      "streetAddress": hospital.address,
+      "addressCountry": "KR",
+      "addressRegion": region,
     },
-    telephone: hospital.phone,
-    ...(hospital.description && {
-      description: hospital.description,
-    }),
+    "telephone": hospital.phone,
+    "medicalSpecialty": [
+      "물리치료",
+      "도수치료",
+      "재활 치료",
+      ...(hospital.specialties || [])
+    ],
     ...(hospital.image && {
-      image: hospital.image,
+      "image": hospital.image,
     }),
     ...(hospital.latitude &&
       hospital.longitude && {
-        geo: {
+        "geo": {
           "@type": "GeoCoordinates",
-          latitude: hospital.latitude,
-          longitude: hospital.longitude,
+          "latitude": hospital.latitude,
+          "longitude": hospital.longitude,
         },
       }),
     ...(hospital.operatingHours && {
-      openingHoursSpecification: Object.entries(hospital.operatingHours).map(
+      "openingHoursSpecification": Object.entries(hospital.operatingHours).map(
         ([day, hours]) => {
           const [open, close] = hours.split("-");
           return {
             "@type": "OpeningHoursSpecification",
-            dayOfWeek: day,
-            opens: open.trim(),
-            closes: close.trim(),
+            "dayOfWeek": day,
+            "opens": open?.trim(),
+            "closes": close?.trim(),
           };
         }
       ),
     }),
-    ...(hospital.specialties &&
-      hospital.specialties.length > 0 && {
-        medicalSpecialty: hospital.specialties.map((specialty) => ({
-          "@type": "MedicalSpecialty",
-          name: specialty,
-        })),
-      }),
+    "url": `${baseUrl}/hospitals/${id}`,
+    "areaServed": {
+      "@type": "City",
+      "name": region
+    }
   };
 }
 
