@@ -33,11 +33,32 @@ export default async function TreatmentPriceDashboard({
             현재 이 병원의 상세 가격 정보를 준비 중입니다.
           </p>
 
+          {/* 비용 정보가 없나요? 버튼 - 지역별 통계 페이지로 링크 */}
+          <div className='mb-4'>
+            <Link
+              href='/statistics'
+              className='inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors shadow-md w-full justify-center'>
+              <svg
+                className='w-5 h-5'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+                />
+              </svg>
+              비용 정보가 없나요? 도수치료 평균 시세 확인하기
+            </Link>
+          </div>
+
           {/* 내 주변 저렴한 병원 찾기 버튼 */}
           <div className='mb-6'>
             <Link
               href={`/?region=${encodeURIComponent(region || '')}&sortBy=cost`}
-              className='inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-md'>
+              className='inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-md w-full justify-center'>
               <svg
                 className='w-5 h-5'
                 fill='none'
@@ -121,6 +142,29 @@ export default async function TreatmentPriceDashboard({
               <p className='mt-3 text-sm text-gray-600 dark:text-gray-400'>
                 해당 지역의 평균 가격을 기준으로 표시합니다.
               </p>
+            )}
+            
+            {/* 비용 정보가 없을 때 지역별 통계 링크 */}
+            {displayPrice === null && (
+              <div className='mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
+                <Link
+                  href='/statistics'
+                  className='inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800 text-indigo-700 dark:text-indigo-300 rounded-lg transition-colors text-sm font-medium'>
+                  <svg
+                    className='w-4 h-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+                    />
+                  </svg>
+                  도수치료 평균 시세 확인하기
+                </Link>
+              </div>
             )}
           </div>
 

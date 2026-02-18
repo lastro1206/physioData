@@ -23,6 +23,70 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 1.0,
   };
 
+  // 가이드 페이지들
+  const guidePages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/guide`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/guide/physical-vs-manual-therapy`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guide/cost-factors`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guide/regional-price-differences`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guide/treatment-duration`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guide/insurance-coverage`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guide/hospital-selection`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guide/maximizing-effectiveness`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guide/rehabilitation-importance`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/statistics`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+  ];
+
   // 병원 상세 페이지들
   let hospitalPages: MetadataRoute.Sitemap = [];
   
@@ -43,7 +107,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 에러 발생 시에도 메인 페이지는 포함
   }
 
-  return [mainPage, ...hospitalPages];
+  return [mainPage, ...guidePages, ...hospitalPages];
 }
 
 /**

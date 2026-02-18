@@ -7,10 +7,30 @@ export default function Footer() {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
           {/* 서비스 소개 */}
           <div>
-            <h3 className='text-white font-semibold mb-4'>물리치료 병원 정보</h3>
-            <p className='text-sm text-gray-400'>
-              전국의 물리치료 및 재활 병원 정보를 제공하는 데이터 대시보드입니다.
+            <h3 className='text-white font-semibold mb-4'>PhysioData</h3>
+            <p className='text-sm text-gray-400 mb-4'>
+              PhysioData는 공공데이터를 기반으로 재활 정보를 제공하는 전문 플랫폼입니다.
+              전국의 물리치료 및 재활 병원 정보를 신뢰할 수 있는 데이터로 제공합니다.
             </p>
+            <div className='flex items-center gap-2 text-sm text-gray-400'>
+              <svg
+                className='w-4 h-4'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'
+                />
+              </svg>
+              <a
+                href='mailto:contact@physiodata.kr'
+                className='hover:text-white transition-colors'>
+                contact@physiodata.kr
+              </a>
+            </div>
           </div>
 
           {/* 빠른 링크 */}
@@ -23,7 +43,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href='/guide/physical-vs-manual-therapy' className='hover:text-white transition-colors'>
+                <Link href='/statistics' className='hover:text-white transition-colors'>
+                  지역별 가격 통계
+                </Link>
+              </li>
+              <li>
+                <Link href='/guide' className='hover:text-white transition-colors'>
                   가이드
                 </Link>
               </li>
@@ -55,15 +80,37 @@ export default function Footer() {
           {/* 연락처 */}
           <div>
             <h3 className='text-white font-semibold mb-4'>문의</h3>
-            <p className='text-sm text-gray-400'>
-              서비스 이용 중 궁금한 점이 있으시면 문의하기 페이지를 이용해주세요.
+            <p className='text-sm text-gray-400 mb-4'>
+              서비스 이용 중 궁금한 점이 있으시면 언제든지 문의해주세요.
             </p>
+            <div className='space-y-2 text-sm'>
+              <div className='flex items-center gap-2 text-gray-400'>
+                <svg
+                  className='w-4 h-4'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'
+                  />
+                </svg>
+                <a
+                  href='mailto:contact@physiodata.kr'
+                  className='hover:text-white transition-colors'>
+                  contact@physiodata.kr
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className='mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400'>
-          <p>© 2024 물리치료 병원 정보. All rights reserved.</p>
+          <p className='font-semibold text-gray-300 mb-2'>© 2024 PhysioData. All rights reserved.</p>
           <p className='mt-2'>
+            PhysioData는 공공데이터를 기반으로 재활 정보를 제공하는 전문 플랫폼입니다.
             본 서비스는 공공데이터를 기반으로 하며, 실제 병원 방문 시 정보가 다를 수 있습니다.
           </p>
         </div>
