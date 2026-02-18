@@ -16,9 +16,32 @@ export default function AdInfeed({ slot, className = '' }: AdInfeedProps) {
 
   useEffect(() => {
     try {
-      if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
-        if (adRef.current && !adRef.current.querySelector('.adsbygoogle[data-ad-slot="' + slot + '"]')) {
-          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+      // 구글 애드센스 스크립트가 로드된 후 광고 초기화
+      if (typeof window !== 'undefined') {
+        const initAd = () => {
+          if ((window as any).adsbygoogle && adRef.current) {
+            try {
+              ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+            } catch (e) {
+              console.error('AdSense Infeed push error:', e);
+            }
+          }
+        };
+
+        // 이미 로드되어 있으면 즉시 초기화
+        if ((window as any).adsbygoogle) {
+          initAd();
+        } else {
+          // 스크립트 로드를 기다림
+          const checkAdSense = setInterval(() => {
+            if ((window as any).adsbygoogle) {
+              initAd();
+              clearInterval(checkAdSense);
+            }
+          }, 100);
+
+          // 5초 후 타임아웃
+          setTimeout(() => clearInterval(checkAdSense), 5000);
         }
       }
     } catch (e) {
