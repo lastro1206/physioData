@@ -281,8 +281,8 @@ async function syncAllHospitalData() {
         hasMore = false;
       } else {
         pageNo++;
-        // API 호출 간 딜레이
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // API 호출 간 딜레이 - 페이지당 1초 대기 (API 차단 방지)
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
@@ -297,14 +297,30 @@ async function syncAllHospitalData() {
     console.log("Supabase에 데이터를 저장하는 중...");
     const result = await bulkUpsertHospitals(allHospitals, 100);
 
+    // 3. 최종 DB에 저장된 병원 개수 확인
+    console.log("\n=== DB 저장 현황 확인 중 ===");
+    const supabase = getSupabaseServer();
+    const { count: dbCount, error: countError } = await supabase
+      .from("hospitals")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) {
+      console.warn("⚠️ DB 개수 조회 중 오류:", countError);
+    } else {
+      console.log(`✅ 현재 DB에 저장된 총 병원 개수: ${dbCount || 0}개`);
+    }
+
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(2);
 
     console.log("\n=== 동기화 완료 ===");
     console.log(`총 처리 시간: ${duration}초`);
-    console.log(`성공: ${result.success}개`);
-    console.log(`실패: ${result.failed}개`);
-    console.log(`총 데이터: ${allHospitals.length}개`);
+    console.log(`이번 동기화 성공: ${result.success}개`);
+    console.log(`이번 동기화 실패: ${result.failed}개`);
+    console.log(`이번 동기화 총 데이터: ${allHospitals.length}개`);
+    if (dbCount !== null) {
+      console.log(`📊 DB에 저장된 최종 병원 개수: ${dbCount}개`);
+    }
   } catch (error) {
     console.error("동기화 중 치명적 오류 발생:", error);
     throw error;

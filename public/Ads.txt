@@ -1,0 +1,9 @@
+# Google AdSense ads.txt
+# 구글 애드센스 승인 후 발급받은 게시자 ID를 아래에 입력하세요
+# 형식: google.com, pub-5675588895907821, DIRECT, f08c47fec0942fa0
+# 
+# 환경 변수 NEXT_PUBLIC_ADSENSE_PUBLISHER_ID에서 자동으로 가져옵니다.
+# .env.local 파일에 NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=pub-xxxxxxxxxxxx 형식으로 추가하세요.
+
+google.com, pub-5675588895907821, DIRECT, f08c47fec0942fa0
+

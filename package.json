@@ -10,7 +10,8 @@
     "sync-data": "tsx scripts/sync-data.ts",
     "update-prices": "tsx scripts/update-treatment-prices.ts",
     "sync-area-prices": "tsx scripts/sync-area-prices.ts",
-    "test-price": "tsx scripts/test-treatment-price.ts"
+    "test-price": "tsx scripts/test-treatment-price.ts",
+    "generate-ads-txt": "tsx scripts/generate-ads-txt.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.96.0",

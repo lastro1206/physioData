@@ -81,61 +81,106 @@ export async function getAllHospitalIdsPaginated(
   return allIds;
 }
 
+/**
+ * 페이지네이션을 사용하여 모든 병원 데이터를 가져옵니다.
+ * Supabase의 1000개 제한을 우회하여 모든 데이터를 로드합니다.
+ */
 export async function getAllHospitals(): Promise<Hospital[]> {
-  console.log('Fetching hospitals from Supabase...');
+  console.log('Fetching hospitals from Supabase (paginated)...');
   console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing');
   console.log('Supabase Anon Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Set' : 'Missing');
 
-  const { data, error, count } = await supabase
-    .from('hospitals')
-    .select('*', { count: 'exact' })
-    .order('name', { ascending: true });
+  const allHospitals: Hospital[] = [];
+  const PAGE_SIZE = 1000; // Supabase 최대 제한
+  let page = 0;
+  let hasMore = true;
+  let totalCount: number | null = null;
 
-  if (error) {
-    console.error('❌ Error fetching hospitals:', error);
-    console.error('Error details:', JSON.stringify(error, null, 2));
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
-    console.error('Error hint:', error.hint);
-    
-    // RLS 관련 에러인지 확인
-    if (error.code === '42501' || error.message?.includes('permission')) {
-      console.error('');
-      console.error('🔒 RLS (Row Level Security) 정책 문제로 보입니다!');
-      console.error('해결 방법:');
-      console.error('1. Supabase 대시보드 → SQL Editor');
-      console.error('2. 다음 SQL 실행:');
-      console.error('   ALTER TABLE hospitals DISABLE ROW LEVEL SECURITY;');
-      console.error('또는');
-      console.error('   CREATE POLICY "Allow public read access" ON hospitals FOR SELECT USING (true);');
+  while (hasMore) {
+    const from = page * PAGE_SIZE;
+    const to = (page + 1) * PAGE_SIZE - 1;
+
+    console.log(`[페이지네이션] 페이지 ${page + 1}: ${from} ~ ${to} 범위 조회 중...`);
+
+    const { data, error, count } = await supabase
+      .from('hospitals')
+      .select('*', { count: 'exact' })
+      .order('name', { ascending: true })
+      .range(from, to);
+
+    if (error) {
+      console.error(`❌ Error fetching hospitals (page ${page + 1}):`, error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      console.error('Error hint:', error.hint);
+      
+      // RLS 관련 에러인지 확인
+      if (error.code === '42501' || error.message?.includes('permission')) {
+        console.error('');
+        console.error('🔒 RLS (Row Level Security) 정책 문제로 보입니다!');
+        console.error('해결 방법:');
+        console.error('1. Supabase 대시보드 → SQL Editor');
+        console.error('2. 다음 SQL 실행:');
+        console.error('   ALTER TABLE hospitals DISABLE ROW LEVEL SECURITY;');
+        console.error('또는');
+        console.error('   CREATE POLICY "Allow public read access" ON hospitals FOR SELECT USING (true);');
+      }
+      
+      // 에러 발생 시 지금까지 가져온 데이터라도 반환
+      if (allHospitals.length > 0) {
+        console.warn(`⚠️ 에러 발생했지만 지금까지 가져온 ${allHospitals.length}개 데이터 반환`);
+        break;
+      }
+      return [];
     }
-    
-    return [];
+
+    if (!data || data.length === 0) {
+      console.log(`[페이지네이션] 페이지 ${page + 1}: 데이터 없음, 종료`);
+      hasMore = false;
+      break;
+    }
+
+    // 첫 페이지에서 전체 개수 저장
+    if (page === 0 && count !== null) {
+      totalCount = count;
+      console.log(`[페이지네이션] 전체 병원 개수: ${totalCount}개`);
+    }
+
+    // DB 컬럼명(snake_case)을 타입(camelCase)으로 변환
+    const transformedData = data.map((hospital: any) => ({
+      ...hospital,
+      operatingHours: hospital.operating_hours || hospital.operatingHours,
+      treatment_price: hospital.treatment_price !== undefined 
+        ? typeof hospital.treatment_price === 'number' 
+          ? hospital.treatment_price 
+          : parseInt(String(hospital.treatment_price || '0'), 10) || undefined
+        : undefined,
+      createdAt: hospital.created_at || hospital.createdAt,
+      updatedAt: hospital.updated_at || hospital.updatedAt,
+    })) as Hospital[];
+
+    allHospitals.push(...transformedData);
+    console.log(`[페이지네이션] 페이지 ${page + 1}: ${data.length}개 병원 로드 완료 (누적: ${allHospitals.length}개)`);
+
+    // 다음 페이지가 있는지 확인
+    if (data.length < PAGE_SIZE) {
+      hasMore = false;
+      console.log(`[페이지네이션] 마지막 페이지 도달 (${data.length} < ${PAGE_SIZE})`);
+    } else {
+      page++;
+    }
   }
 
-  if (!data) {
-    console.warn('⚠️ No data returned from Supabase (data is null)');
-    return [];
+  console.log(`✅ Successfully fetched ${allHospitals.length} hospitals from Supabase`);
+  if (totalCount !== null && totalCount !== allHospitals.length) {
+    console.log(`ℹ️ Total count in DB: ${totalCount}, but returned: ${allHospitals.length}`);
+    if (totalCount > allHospitals.length) {
+      console.warn(`⚠️ 일부 데이터가 누락되었을 수 있습니다. (${totalCount - allHospitals.length}개 차이)`);
+    }
   }
 
-  console.log(`✅ Successfully fetched ${data.length} hospitals from Supabase`);
-  if (count !== null && count !== data.length) {
-    console.log(`ℹ️ Total count in DB: ${count}, but returned: ${data.length}`);
-    console.log('   This might indicate RLS policy is filtering some rows');
-  }
-
-  // DB 컬럼명(snake_case)을 타입(camelCase)으로 변환
-  return data.map((hospital: any) => ({
-    ...hospital,
-    operatingHours: hospital.operating_hours || hospital.operatingHours,
-    treatment_price: hospital.treatment_price !== undefined 
-      ? typeof hospital.treatment_price === 'number' 
-        ? hospital.treatment_price 
-        : parseInt(String(hospital.treatment_price || '0'), 10) || undefined
-      : undefined,
-    createdAt: hospital.created_at || hospital.createdAt,
-    updatedAt: hospital.updated_at || hospital.updatedAt,
-  })) as Hospital[];
+  return allHospitals;
 }
 
 export async function getFilteredHospitals(

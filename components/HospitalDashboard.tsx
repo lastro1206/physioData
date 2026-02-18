@@ -6,6 +6,9 @@ import SearchBar from "./SearchBar";
 import FilterPanel from "./FilterPanel";
 import HospitalCard from "./HospitalCard";
 import ThemeToggle from "./ThemeToggle";
+import GuideSection from "./GuideSection";
+import Footer from "./Footer";
+import AdInfeed from "./common/AdInfeed";
 import { extractAllRegions, extractDistrictsByRegion } from "@/lib/utils";
 
 interface HospitalDashboardProps {
@@ -155,11 +158,14 @@ export default function HospitalDashboard({
             {/* 병원 카드 그리드 */}
             {filteredHospitals.length > 0 ? (
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                {filteredHospitals.map((hospital) => (
-                  <HospitalCard
-                    key={hospital.id}
-                    hospital={hospital}
-                  />
+                {filteredHospitals.map((hospital, index) => (
+                  <div key={hospital.id}>
+                    <HospitalCard hospital={hospital} />
+                    {/* 매 5번째 아이템마다 인피드 광고 삽입 */}
+                    {(index + 1) % 5 === 0 && index < filteredHospitals.length - 1 && (
+                      <AdInfeed slot="YOUR_INFEED_SLOT_ID" />
+                    )}
+                  </div>
                 ))}
               </div>
             ) : (
@@ -186,7 +192,13 @@ export default function HospitalDashboard({
             )}
           </div>
         </div>
+
+        {/* 가이드 섹션 */}
+        <GuideSection />
       </div>
+
+      {/* 푸터 */}
+      <Footer />
     </div>
   );
 }

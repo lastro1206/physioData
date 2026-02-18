@@ -1,5 +1,6 @@
 import { getAreaAveragePrice } from '@/lib/calculate-regional-average';
 import { extractRegion, formatCost } from '@/lib/utils';
+import { generateManualTherapyGuide } from '@/lib/generate-guide-content';
 import AdPlaceholder from './AdPlaceholder';
 
 interface PriceGuideProps {
@@ -19,16 +20,8 @@ export default async function PriceGuide({
   const region = extractRegion(hospitalAddress);
   const areaPrice = region ? await getAreaAveragePrice(region, itemCd) : null;
 
-  // 전문가 가이드 텍스트 (500자 이상)
-  const expertGuideText = `
-물리치료 및 도수치료 비용은 지역, 병원 규모, 전문의 경력, 시설 수준 등 다양한 요인에 따라 크게 달라질 수 있습니다. 전문가들이 분석한 지역별 시세 가이드를 참고하시면 예산 계획을 세우는 데 도움이 됩니다.
-
-서울특별시의 경우 대도시 특성상 평균적으로 1회당 15만원 정도의 비용이 소요되며, 경기도는 13만원, 부산광역시는 12만원 수준입니다. 전국 평균은 약 12.5만원 정도로 집계됩니다. 다만 이는 비급여 항목 기준이며, 건강보험이 적용되는 경우 본인부담금은 훨씬 낮아집니다.
-
-치료 횟수는 질환의 종류와 심각도에 따라 달라집니다. 급성 통증의 경우 1~2주 정도의 단기 치료로 충분하지만, 만성 질환이나 재활 치료의 경우 수개월에 걸친 장기 치료가 필요할 수 있습니다. 또한 병원의 위치, 시설 수준, 전문의의 경력 등도 비용 결정에 영향을 미칩니다.
-
-정확한 비용은 병원에 직접 문의하시거나 초진 상담을 통해 확인하시는 것이 가장 좋습니다. 많은 병원에서 무료 상담 서비스를 제공하므로, 치료 계획과 예상 비용을 미리 확인하실 수 있습니다. 보험 적용 여부, 치료 기간, 예상 총 비용 등을 사전에 파악하면 예산 계획을 세우는 데 도움이 됩니다.
-  `.trim();
+  // AI 생성 전문가 가이드 텍스트 (가격 데이터가 없을 때 사용)
+  const expertGuideText = generateManualTherapyGuide(region || undefined);
 
   return (
     <section className='mb-8'>

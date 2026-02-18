@@ -88,11 +88,27 @@ async function syncHospitalData() {
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(2);
 
+    // 4. 최종 DB에 저장된 병원 개수 확인
+    console.log("\n=== DB 저장 현황 확인 중 ===");
+    const supabase = getSupabaseServer();
+    const { count: dbCount, error: countError } = await supabase
+      .from("hospitals")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) {
+      console.warn("⚠️ DB 개수 조회 중 오류:", countError);
+    } else {
+      console.log(`✅ 현재 DB에 저장된 총 병원 개수: ${dbCount || 0}개`);
+    }
+
     console.log("\n=== 동기화 완료 ===");
     console.log(`총 처리 시간: ${duration}초`);
-    console.log(`성공: ${successCount}개`);
-    console.log(`실패: ${errorCount}개`);
-    console.log(`총 데이터: ${hospitals.length}개`);
+    console.log(`이번 동기화 성공: ${successCount}개`);
+    console.log(`이번 동기화 실패: ${errorCount}개`);
+    console.log(`이번 동기화 총 데이터: ${hospitals.length}개`);
+    if (dbCount !== null) {
+      console.log(`📊 DB에 저장된 최종 병원 개수: ${dbCount}개`);
+    }
   } catch (error) {
     console.error("동기화 중 치명적 오류 발생:", error);
     process.exit(1);

@@ -99,8 +99,8 @@ export async function fetchAllHospitalData(
       hasMore = false;
     } else {
       pageNo++;
-      // API 호출 간 딜레이 (과도한 요청 방지)
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // API 호출 간 딜레이 (과도한 요청 방지) - 페이지당 1초 대기
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 

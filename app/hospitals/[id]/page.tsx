@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { getHospitalById, getAllHospitalIdsPaginated } from "@/lib/hospitals";
 import { Hospital } from "@/types/hospital";
 import AdPlaceholder from "@/components/AdPlaceholder";
+import AdsUnit from "@/components/AdsUnit";
+import AdBanner from "@/components/common/AdBanner";
 import TreatmentPriceDashboard from "@/components/TreatmentPriceDashboard";
 import PriceGuide from "@/components/PriceGuide";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -169,6 +171,9 @@ export default async function HospitalDetailPage({ params }: PageProps) {
         </header>
 
         <main className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+          {/* 광고: 상단 (병원 이름 바로 아래) */}
+          <AdsUnit slot="YOUR_SLOT_ID_1" className="mb-8" />
+
           <div className='mb-8'>
             <AdPlaceholder position='top' />
           </div>
@@ -216,11 +221,17 @@ export default async function HospitalDetailPage({ params }: PageProps) {
             </dl>
           </section>
 
+          {/* 배너 광고: 가격 정보 섹션 바로 위 */}
+          <AdBanner slot="YOUR_BANNER_SLOT_ID" className="mb-6" />
+
           {/* 비용 대시보드 */}
           <TreatmentPriceDashboard
             hospital={hospital}
             areaAveragePrice={areaAveragePrice}
           />
+
+          {/* 광고: 비용 정보 바로 아래 */}
+          <AdsUnit slot="YOUR_SLOT_ID_3" className="mb-6" />
 
           <div className='mb-8'>
             <AdPlaceholder position='middle' />
