@@ -39,8 +39,8 @@ export async function generateMetadata({
     ? hospital.description
     : `${hospital.name}은(는) ${hospital.address}에 위치한 물리치료 및 재활 병원입니다. ${region} 지역의 도수치료 및 재활 치료 정보를 제공합니다.`;
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://physiodata.kr');
+  // BASE_URL 고정: https:// 프로토콜 포함
+  const baseUrl = 'https://physio-data.vercel.app';
 
   return {
     title,
@@ -78,8 +78,8 @@ export async function generateMetadata({
 }
 
 function generateStructuredData(hospital: Hospital, id: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://physiodata.kr');
+  // BASE_URL 고정: https:// 프로토콜 포함
+  const baseUrl = 'https://physio-data.vercel.app';
   
   const region = extractRegion(hospital.address) || '전국';
 

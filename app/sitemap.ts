@@ -9,11 +9,8 @@ import { getAllHospitalIdsPaginated } from '@/lib/static-generation';
  * ISR: 1시간마다 재생성 (revalidate: 3600)
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // 환경 변수에서 사이트 URL 가져오기
-  // .env.local에 NEXT_PUBLIC_SITE_URL=https://yourdomain.com 추가 필요
-  // Vercel 배포 시 자동으로 VERCEL_URL 환경 변수 사용 가능
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://yourdomain.com');
+  // BASE_URL 고정: https:// 프로토콜 포함
+  const baseUrl = 'https://physio-data.vercel.app';
   
   // 메인 페이지
   const mainPage: MetadataRoute.Sitemap[0] = {

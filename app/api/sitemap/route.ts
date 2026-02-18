@@ -9,8 +9,8 @@ import { getAllHospitalIdsPaginated } from '@/lib/static-generation';
  */
 export async function GET() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://yourdomain.com');
+    // BASE_URL 고정: https:// 프로토콜 포함
+    const baseUrl = 'https://physio-data.vercel.app';
 
     // 모든 병원 ID 가져오기
     const hospitalIds = await getAllHospitalIdsPaginated(1000);

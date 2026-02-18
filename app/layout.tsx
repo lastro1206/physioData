@@ -29,12 +29,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // 사이트 URL 가져오기
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "https://physiodata.kr");
+  // BASE_URL 고정: https:// 프로토콜 포함
+  const siteUrl = "https://physio-data.vercel.app";
 
   // JSON-LD 구조화된 데이터: Organization 스키마 (병원 정보 서비스)
   const organizationSchema = {
