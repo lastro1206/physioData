@@ -12,7 +12,9 @@ export interface Hospital {
   operatingHours?: {
     [key: string]: string; // 예: { "월": "09:00-18:00", "화": "09:00-18:00" }
   };
-  operating_hours?: any; // DB 컬럼명 (snake_case) 지원
+  operating_hours?: {
+    [key: string]: string;
+  } | null; // DB 컬럼명 (snake_case) 지원
   specialties?: string[]; // 진료과목 배열
   latitude?: number;
   longitude?: number;

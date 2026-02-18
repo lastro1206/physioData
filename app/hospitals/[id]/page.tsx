@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getHospitalById, getAllHospitalIdsPaginated } from "@/lib/hospitals";
 import { Hospital } from "@/types/hospital";
@@ -174,11 +175,16 @@ export default async function HospitalDetailPage({ params }: PageProps) {
 
           {hospital.image && (
             <section className='mb-8'>
-              <img
-                src={hospital.image}
-                alt={hospital.name}
-                className='w-full h-auto rounded-lg shadow-lg'
-              />
+              <div className='relative w-full h-auto aspect-video rounded-lg shadow-lg overflow-hidden'>
+                <Image
+                  src={hospital.image}
+                  alt={hospital.name}
+                  fill
+                  className='object-cover'
+                  sizes='(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px'
+                  priority
+                />
+              </div>
             </section>
           )}
 

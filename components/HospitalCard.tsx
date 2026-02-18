@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Hospital } from "@/types/hospital";
 import { formatCost } from "@/lib/utils";
 
@@ -12,11 +13,13 @@ export default function HospitalCard({ hospital }: HospitalCardProps) {
       href={`/hospitals/${hospital.id}`}
       className='block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-blue-500 dark:hover:border-blue-400'>
       {hospital.image && (
-        <div className='aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-900'>
-          <img
+        <div className='aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-900 relative'>
+          <Image
             src={hospital.image}
             alt={hospital.name}
-            className='w-full h-full object-cover'
+            fill
+            className='object-cover'
+            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
           />
         </div>
       )}
